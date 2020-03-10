@@ -1,42 +1,37 @@
-from imagededup.methods import PHash
-import argparse, requests, cv2, os, glob
+import argparse, requests, cv2, os, re
 
 # defaults
 API_KEY = os.environ['BING_SEARCH_KEY']
 URL =  os.environ['BING_SEARCH_URL']
-MAX_RESULTS = 250
 GROUP_SIZE = 50
-EXCEPTIONS = set([IOError, FileNotFoundError, requests.exceptions.RequestException, requests.exceptions.HTTPError, requests.exceptions.ConnectionError, requests.exceptions.Timeout])
 
 if __name__ == '__main__':
 
 	# parse the arguments
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-q", "--query", required=True, help="search query to search Bing Image API for")
-	ap.add_argument("-o", "--output", required=True, help="path to output directory of images")
+	ap.add_argument("-f", "--folder", required=True, help="path to output directory of images")
 	ap.add_argument("-s", "--size", required=False, help="image size: Small, Medium, Large, Wallpaper, All", default='All')
-	args = vars(ap.parse_args())
+	ap.add_argument("-c", "--color", required=False, help="image color: ColorOnly, Monochrome, Black, Blue, Brown, Gray, Green, Orange, Pink, Purple, Red, Teal, White, Yellow")
+	ap.add_argument("-t", "--time", required=False, help="image discovered: Day, Week, Month")
+	ap.add_argument("-m", "--max", required=False, help="max results", default="1000")
+	args, unknown = ap.parse_known_args()
 
 	# check output directory
-	directory = os.path.sep.join(["data", args["output"]])
+	directory = os.path.sep.join(["data", args.folder])
 	if not os.path.exists(directory): os.makedirs(directory)
-	directoryFiles = glob.glob(directory + os.path.sep + "*")
-	if len(directoryFiles) == 0: nameOffset = 0
-	else:
-		latestFile = max(directoryFiles, key=os.path.getctime)
-		nameOffset = int(os.path.splitext(os.path.basename(latestFile))[0]) + 1
 
 	# search parameters
-	term = args["query"]
+	term = args.query
 	headers = {"Ocp-Apim-Subscription-Key" : API_KEY}
-	params = {"q": term, "offset": 0, "count": GROUP_SIZE, 'size': args['size']}
+	params = {"q": term, "offset": 0, "count": GROUP_SIZE, 'size': args.size, 'color': args.color, 'freshness': args.time}
 
 	# make the search
 	print("[INFO] searching Bing API for '{}'".format(term))
 	search = requests.get(URL, headers=headers, params=params)
 	search.raise_for_status()
 	results = search.json()
-	estNumResults = min(results["totalEstimatedMatches"], MAX_RESULTS)
+	estNumResults = min(results["totalEstimatedMatches"], int(args.max))
 	print("[INFO] {} total results for '{}'".format(estNumResults, term))
 	total = 0
 
@@ -54,27 +49,26 @@ if __name__ == '__main__':
 			try:
 				print("[INFO] fetching: {}".format(v["contentUrl"]))
 				r = requests.get(v["contentUrl"], timeout=30)
-				ext = v["contentUrl"][v["contentUrl"].rfind("."):]
-				p = os.path.sep.join(["data", args["output"], "{}{}".format(str(nameOffset + total).zfill(8), ext)])
+				match = re.search(r"\.(\w{3,4})(?:$|\?)", v["contentUrl"])
+				if not match: continue
+				ext = match.group(1).lower()
+				if ext not in ['png', 'jpg', 'jpeg', 'tiff', 'bmp', 'gif']: continue
+				p = os.path.sep.join(["data", args.folder, "{}.{}".format(str(total).zfill(8), ext)])
 				f = open(p, "wb")
 				f.write(r.content)
 				f.close()
-			except Exception as e:
-				if type(e) in EXCEPTIONS:
-					print("[INFO] skipping: {}".format(v["contentUrl"]))
-					continue
+			except Exception:
+				continue
 		
 			image = cv2.imread(p)
+
 			if image is None:
-				print("[INFO] deleting: {}".format(p))
-				os.remove(p)
+				try:
+					os.remove(p)
+					print("[INFO] {} deleted".format(p))
+				except Exception:
+					print("[ERROR] could not delete {}".format(p))
 				continue
 
 			total += 1
 
-	# remove duplicates
-	phasher = PHash()
-	duplicates = phasher.find_duplicates_to_remove(image_dir=directory)
-	print("[INFO] removing {} duplicates".format(str(len(duplicates))))
-	for duplicate in duplicates: os.remove(os.path.join(directory, duplicate))
-	
