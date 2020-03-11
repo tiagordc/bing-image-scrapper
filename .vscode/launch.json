@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "args": ["--query", "software", "--folder", "software", "--size", "Large", "--color", "All", "--max", "1000", "--strategy", "Detection", "--objects", "person", "--probability", "90"]
         }
     ]
 }
