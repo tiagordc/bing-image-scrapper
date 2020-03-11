@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["--query", "software", "--folder", "software", "--size", "Large", "--color", "All", "--max", "1000", "--strategy", "Detection", "--objects", "person", "--probability", "90"]
+            "args": ["--query", "software", "--folder", "software", "--size", "Large", "--color", "All", "--max", "100", "--strategy", "Detection", "--objects", "person", "--probability", "90"]
         }
     ]
 }
