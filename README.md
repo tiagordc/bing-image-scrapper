@@ -5,8 +5,8 @@ Command line utility to scrap images using Bing API.
 
 Includes other utilities to automate dataset creation:
 
-    * Randomize images to create train and test folder
-    * Split images by prediction and detection classes
+ * Randomize images to create train and test folder
+ * Split images by prediction and detection classes
 
 ## Resources
 
