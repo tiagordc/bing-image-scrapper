@@ -16,11 +16,13 @@ if __name__ == '__main__':
     ap.add_argument("-f", "--folder", required=True, help="path to output directory of images")
     args, unknown = ap.parse_known_args()
 
-    directory = os.path.sep.join(["data", args.folder])
+    folder = args.folder
+    if os.path.isabs(folder): directory = folder
+    else: directory = os.path.sep.join(["data", args.folder])
 
     for this in os.listdir(directory):
         filePath = os.path.join(directory, this)
-        if os.path.isfile(filePath) and re.search(r"\A\d", this): # only changing files that start with a number
+        if os.path.isfile(filePath): # and re.search(r"\A\d", this): # only changing files that start with a number
             rand = randomName(directory, os.path.splitext(this)[1])
             newPath = os.path.join(directory, rand)
             os.rename(filePath, newPath)

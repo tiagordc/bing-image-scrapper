@@ -8,7 +8,15 @@ Includes other utilities to automate dataset creation:
  * Randomize images to create train and test folder
  * Split images by prediction and detection classes
 
-## Resources
+### Run
+
+Windows:
+    py -3 -m venv env\
+    env\scripts\activate\
+    python -m pip install --upgrade pip\
+    pip install -r requirements.txt
+
+### Resources
 
 https://docs.microsoft.com/en-us/rest/api/cognitiveservices-bingsearch/bing-images-api-v7-reference
 https://docs.microsoft.com/en-us/azure/cognitive-services/bing-image-search/quickstarts/python
