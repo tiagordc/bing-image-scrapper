@@ -13,6 +13,7 @@ Also some other tools to process images:
  * PREDICTION: list all predictions for images on a folder ranked by the most common
  * RANDMIZE: rename all images in a folder with a random name. Useful to separate train and test folders
  * SCRAPPER: scrap the web
+ * YOLO: check yolo files in folder
 
 ### Run
 
