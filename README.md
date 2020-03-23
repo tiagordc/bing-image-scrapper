@@ -1,12 +1,18 @@
 
 # bing-image-scrapper
 
-Command line utility to scrap images using Bing API.
+Command line utility to scrap images from the web using Bing API.
 
-Includes other utilities to automate dataset creation:
+Also some other tools to process images:
 
- * Randomize images to create train and test folder
- * Split images by prediction and detection classes
+ * CROP: given a folder of YOLO labeled images and a class name, crop all regions of that class to a separate folder. Useful to validade labels
+ * DUPLICATES: given a folder of images and a threshold move similar images to a separate folder.
+ * FILTER: move images to folder A or B by comparing it to a given classification or detection model
+ * FIX: convert all images to jpeg and try to fix errors with bad Huffman code
+ * OCR: given a folder of images perform OCR and print the result
+ * PREDICTION: list all predictions for images on a folder ranked by the most common
+ * RANDMIZE: rename all images in a folder with a random name. Useful to separate train and test folders
+ * SCRAPPER: scrap the web
 
 ### Run
 
