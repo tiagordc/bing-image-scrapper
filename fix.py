@@ -1,7 +1,7 @@
 import argparse, os, imghdr
 from PIL import Image
 
-# Convert all images to jpeg
+# Convert all images to jpeg and try to fix error: Corrupt JPEG data bad Huffman code
 
 if __name__ == '__main__':
 
@@ -13,33 +13,28 @@ if __name__ == '__main__':
     if os.path.isabs(folder): directory = folder
     else: directory = os.path.sep.join(["data", args.folder])
 
+    images = [".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp", ".tiff", ".jfif"]
+
+    converted = 0
+    rewrite = 0
+
     for this in os.listdir(directory):
 
+        extension = os.path.splitext(this)[1].lower()
         filePath = os.path.join(directory, this)
-        if os.path.isfile(filePath):
+        noExtension = os.path.splitext(filePath)[0]
 
-            what = imghdr.what(filePath)
+        if os.path.isfile(filePath) and extension in images:
 
-            if what is None: continue
+            jpegPath = noExtension + ".jpg"
 
-            if what is "jpeg":
-                try:
-                    im = Image.open(filePath)
-                    im.verify() #I perform also verify, don't know if he sees other types o defects
-                    im.close() #reload is necessary in my case
-                    im = Image.open(filePath) 
-                    im.transpose(Image.FLIP_LEFT_RIGHT)
-                    im.close()
-                except Exception as xpto: 
-                    pass
+            with Image.open(filePath) as im:
+                im.convert('RGB').save(jpegPath)
+
+            if extension == ".jpg":
+                rewrite += 1
             else:
-                jpegPath = os.path.splitext(filePath)[0] + ".jpg"
-                with Image.open(filePath) as im:
-                    rgb_im = im.convert('RGB')
-                    rgb_im.save(jpegPath)
                 os.remove(filePath)
+                converted += 1
 
-
-    # im = Image.open("Ba_b_do8mag_c6_big.png")
-    # rgb_im = im.convert('RGB')
-    # rgb_im.save('colors.jpg')
+    print(f"Converted {converted} | Rewrite {rewrite}")
