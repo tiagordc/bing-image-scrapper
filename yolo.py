@@ -1,13 +1,11 @@
-import argparse, os, imghdr
-from PIL import Image
+import argparse, os
 
-# check yolo 
+# check yolo files: find missing images or labels and summarise the label totals
 
 if __name__ == '__main__':
 
     ap = argparse.ArgumentParser()
     ap.add_argument("-f", "--folder", required=True, help="path to directory of images")
-    ap.add_argument("-c", "--crop", required=True, help="YOLO class to crop")
     args, unknown = ap.parse_known_args()
 
     folder = args.folder
