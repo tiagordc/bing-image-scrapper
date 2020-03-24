@@ -1,5 +1,4 @@
-import argparse, os, random, string, imghdr, re
-from PIL import Image
+import argparse, os, random, string, re
 
 # Rename all files in a folder with a random name
 # Used to randomize train and test data

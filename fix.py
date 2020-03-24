@@ -1,4 +1,4 @@
-import argparse, os, imghdr
+import argparse, os
 from PIL import Image
 
 # Convert all images to jpeg and try to fix error: Corrupt JPEG data bad Huffman code
