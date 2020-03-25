@@ -13,11 +13,12 @@ Also some other tools to process images:
  * PREDICTION: list all predictions for images on a folder ranked by the most common
  * RANDMIZE: rename all images in a folder with a random name. Useful to separate train and test folders
  * SCRAPPER: scrap the web
+ * TRAIN: create train and test .txt files for YOLO training
  * YOLO: check yolo files in folder
 
 ### Run
 
-Windows:
+Windows:\
     py -3 -m venv env\
     env\scripts\activate\
     python -m pip install --upgrade pip\
